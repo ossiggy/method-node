@@ -664,7 +664,7 @@ export interface IAccountListOpts {
   holder_id?: string | null;
   'liability.mch_id'?: string | null;
   'liability.type'?: string | null;
-  expand?: string | null;
+  expand?: TAccountExpandableFields[] | null;
 }
 
 export interface IAccountDetails {
@@ -731,7 +731,7 @@ export interface IAccountVerificationSession {
   updated_at: string;
 }
 
-export interface IAccountTypeUpdateOpts {
+export interface IAccountVerificationTypeUpdateOpts {
   cvv?: string;
   exp_year?: string;
   exp_month?: string;
@@ -739,9 +739,9 @@ export interface IAccountTypeUpdateOpts {
   number?: string;
 }
 
-export interface IAccountThreeDSUpdateOpts extends IAccountTypeUpdateOpts {}
+export interface IAccountThreeDSUpdateOpts extends IAccountVerificationTypeUpdateOpts {}
 
-export interface IAccountIssuerUpdateOpts extends IAccountTypeUpdateOpts {}
+export interface IAccountIssuerUpdateOpts extends IAccountVerificationTypeUpdateOpts {}
 
 export interface IAccountVerificationSessionUpdateOpts {
   three_ds?: IAccountThreeDSUpdateOpts;
