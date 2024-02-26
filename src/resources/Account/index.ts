@@ -866,7 +866,7 @@ export default class Account extends Resource {
 
   async getLastVerificationStatusField(holder_id: string){
     return super._getWithParams<IAccountExpanded, { holder_id: string, 'liability.type': string, 'expand': string[] }>(
-      { holder_id, 'liability.type': 'credit_card', 'expand': ['latest_verification_session'] }
+      { holder_id, 'liability.type': 'credit_card', expand: ['latest_verification_session'] }
     )
   }
 }

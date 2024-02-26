@@ -160,7 +160,7 @@ export interface IAuthElementEntityOpts {
   }
 }
 
-export interface IAuthElementConnectOpts {
+export interface IConnectElementOpts {
   products?: TConnectProducts[];
   entity?: IAuthElementEntityOpts;
   accounts?: string[];
@@ -179,7 +179,7 @@ export interface IElementTokenCreateOpts {
   team_icon?: string | null;
   link?: ILinkElementCreateOpts;
   auth?: IAuthElementCreateOpts;
-  connect?: IAuthElementConnectOpts;
+  connect?: IConnectElementOpts;
 }
 
 export interface IElement {
