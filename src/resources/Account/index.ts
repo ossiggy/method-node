@@ -2,6 +2,7 @@ import Resource, { IRequestConfig, IResourceError } from '../../resource';
 import Configuration from '../../configuration';
 import Verification from '../Verification';
 import AccountSync, { IAccountSync } from '../AccountSync';
+import { TConnectProducts } from '../Element';
 
 export const AccountTypes = {
   ach: 'ach',
@@ -34,7 +35,7 @@ export const AccountStatuses = {
   disabled: 'disabled',
   active: 'active',
   processing: 'processing',
-  closed: 'closed'
+  closed: 'closed',
 };
 
 export type TAccountStatuses =
@@ -148,13 +149,59 @@ export type TAccountLiabilityTypes =
   | 'medical'
   | 'loan';
 
+export const AccountLiabilityCreditCardSubType = {
+  flexible_spending:'flexible_spending',
+  charge: 'charge',
+  secured: 'secured',
+  unsecured: 'unsecured',
+  purchase: 'purchase',
+  business: 'business',
+}
+
+export type TAccountLiabilityCreditCardSubType =
+  | 'flexible_spending' 
+  | 'charge' 
+  | 'secured' 
+  | 'unsecured' 
+  | 'purchase' 
+  | 'business';
+
+export const AccountLiabilityPersonalLoanSubType = {
+  line_of_credit: 'line_of_credit',
+  heloc: 'heloc',
+  secured: 'secured',
+  unsecured: 'unsecured',
+  note: 'note',
+}
+
+export type TAccountLiabilityPersonalLoanSubType =
+  | 'line_of_credit'
+  | 'heloc'
+  | 'secured'
+  | 'unsecured'
+  | 'note';
+
+export const InterestRateSource = {
+  financial_institution: 'financial_institution',
+  public_data: 'public_data',
+  method: 'method',
+}
+
+export type TInterestRateSource =
+  | 'financial_institution'
+  | 'public_data'
+  | 'method';
+
 export const PastDueStatuses = {
   unknown: 'unknown',
   overdue: 'overdue',
   on_time: 'on_time',
 };
 
-export type TPastDueStatuses = 'unknown' | 'overdue' | 'on_time';
+export type TPastDueStatuses = 
+  | 'unknown'
+  | 'overdue'
+  | 'on_time';
 
 export const AutoPayStatuses = {
   unknown: 'unknown',
@@ -162,7 +209,10 @@ export const AutoPayStatuses = {
   inactive: 'inactive',
 };
 
-export type TAutoPayStatuses = 'unknown' | 'active' | 'inactive';
+export type TAutoPayStatuses = 
+  | 'unknown'
+  | 'active'
+  | 'inactive';
 
 export const DelinquencyPeriods = {
   less_than_30: 'less_than_30',
@@ -251,6 +301,33 @@ export type TSensitiveFields =
   | 'expiration_month'
   | 'expiration_year';
 
+export const AccountVerificationSessionStatuses = {
+  pending: 'pending',
+  failed: 'failed',
+  in_progress: 'in_progress',
+  verified: 'verified',
+};
+
+export type TAccountVerificationSessionStatuses = 
+  | 'pending'
+  | 'failed'
+  | 'in_progress'
+  | 'verified';
+
+export const AccountExpandableFields = {
+  latest_verification_session: 'latest_verification_session',
+};
+
+export type TAccountExpandableFields = 
+  | 'latest_verification_session';
+
+export const AccountSubscriptionTypes = {
+  transactions: 'transactions',
+}
+
+export type TAccountSubscriptionTypes = 
+  | 'transactions';
+
 export interface TDelinquencyHistoryItem {
   start_date: string;
   end_date: string;
@@ -309,11 +386,11 @@ export interface IAccountLiabilityLoan {
   next_payment_due_date: string | null;
   interest_rate_type?: 'fixed' | 'variable';
   interest_rate_percentage?: number | null;
-  interest_rate_source?: 'financial_institution' | 'public_data' | 'method' | null;
+  interest_rate_source?: TInterestRateSource | null;
 }
 
 export interface IAccountLiabilityCreditCard extends IAccountLiabilityLoan {
-  sub_type: 'flexible_spending' | 'charge' | 'secured' | 'unsecured' | 'purchase' | 'business' | null;
+  sub_type: TAccountLiabilityCreditCardSubType | null;
   last_statement_balance: number | null;
   remaining_statement_balance: number | null;
   available_credit: number | null;
@@ -388,16 +465,16 @@ export interface IAccountLiabilityMortgage extends IAccountLiabilityLoan {
 }
 
 export interface IAccountLiabilityPersonalLoan extends IAccountLiabilityLoan {
-  sub_type: 'line_of_credit' | 'heloc' | 'secured' | 'unsecured' | 'note' | null,
+  sub_type: TAccountLiabilityPersonalLoanSubType | null;
   expected_payoff_date: string | null;
   available_credit: number | null;
   principal_balance: number | null;
   year_to_date_interest_paid: number | null;
 }
 
-export interface IAccountLiabilityCreditBuilder extends IAccountLiabilityLoan { }
+export interface IAccountLiabilityCreditBuilder extends IAccountLiabilityLoan {}
 
-export interface IAccountLiabilityCollection extends IAccountLiabilityLoan { }
+export interface IAccountLiabilityCollection extends IAccountLiabilityLoan {}
 
 export interface IAccountLiabilityBusinessLoan {
   name: string;
@@ -467,7 +544,15 @@ export type IAccountClearing = {
   number: string;
 };
 
-export interface IAccount {
+export interface IAccountVerificationSessionString {
+  latest_verification_session: string;
+}
+
+export interface IAccountVerificationSessionExpanded {
+  latest_verification_session: IAccountVerificationSession;
+}
+
+export interface IAccountBase {
   id: string;
   holder_id: string;
   status: TAccountStatuses;
@@ -477,11 +562,20 @@ export interface IAccount {
   clearing: IAccountClearing | null;
   capabilities: TAccountCapabilities[];
   available_capabilities: TAccountCapabilities[];
+  products: TConnectProducts[];
+  restricted_products: TConnectProducts[];
+  subscriptions: TAccountSubscriptionTypes[];
+  available_subscriptions: TAccountSubscriptionTypes[];
+  restricted_subscriptions: TAccountSubscriptionTypes[];
   error: IResourceError | null;
   created_at: string;
   updated_at: string;
   metadata: {} | null;
 }
+
+export type IAccount = IAccountBase & IAccountVerificationSessionString;
+
+export type IAccountExpanded = IAccountBase & IAccountVerificationSessionExpanded;
 
 export interface IAccountCreateOpts {
   holder_id: string;
@@ -561,6 +655,7 @@ export interface IAccountListOpts {
   holder_id?: string | null;
   'liability.mch_id'?: string | null;
   'liability.type'?: string | null;
+  expand?: string | null;
 }
 
 export interface IAccountDetails {
@@ -586,14 +681,85 @@ export interface IAccountPaymentHistory {
 }
 
 export interface IAccountPayoff {
-  id: string,
-  status: TAccountPayoffStatuses,
-  amount: number | null,
-  term: number | null,
-  per_diem_amount: number | null,
-  error: IResourceError | null,
-  created_at: string,
-  updated_at: string,
+  id: string;
+  status: TAccountPayoffStatuses;
+  amount: number | null;
+  term: number | null;
+  per_diem_amount: number | null;
+  error: IResourceError | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IAccountVerificationSessionType {
+  network: string | null;
+  issuer: string | null;
+  last4: string | null;
+  exp_year: string | null;
+  exp_month: string | null;
+  exp_check: 'pass' | 'fail' | null;
+  cvv: string | null;
+  cvv_check: 'pass' | 'fail' | null;
+  billing_zip_code: string | null;
+  billing_zip_code_check: 'pass' | 'fail' | null;
+  number: string | null;
+  charge_check: 'pass' | 'fail' | null;
+  pre_auth_check: 'pass' | 'fail' | null;
+}
+
+export interface IAccountVerificationSessionThreeDS extends IAccountVerificationSessionType {}
+
+export interface IAccountVerificationSessionIssuer extends IAccountVerificationSessionType {
+  updater_status: string | null;
+}
+
+export interface IAccountVerificationSession {
+  id: string;
+  status: string;
+  status_error: string | null;
+  type: string;
+  three_ds?: IAccountVerificationSessionThreeDS;
+  issuer?: IAccountVerificationSessionIssuer;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IAccountTypeUpdateOpts {
+  cvv?: string;
+  exp_year?: string;
+  exp_month?: string;
+  billing_zip_code?: string;
+  number?: string;
+}
+
+export interface IAccountThreeDSUpdateOpts extends IAccountTypeUpdateOpts {}
+
+export interface IAccountIssuerUpdateOpts extends IAccountTypeUpdateOpts {}
+
+export interface IAccountVerificationSessionUpdateOpts {
+  three_ds?: IAccountThreeDSUpdateOpts;
+  issuer?: IAccountIssuerUpdateOpts;
+}
+
+export interface IAccountSubscription {
+  id: string;
+  name: TAccountSubscriptionTypes;
+  status: string;
+  latest_transaction_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface IAccountTransactions {
+  subscription: IAccountSubscription;
+}
+
+export interface IAccountSubscribeResponse {
+  transactions?: IAccountTransactions;
+}
+
+export interface IAccountSubscriptionCreateOpts {
+  enroll: TAccountSubscriptionTypes[]
 }
 
 export class AccountSubResources {
@@ -682,5 +848,25 @@ export default class Account extends Resource {
       `/${id}/consent`,
       data,
     );
+  }
+
+  async updateVerification(id: string, ver_id:string, opts: IAccountVerificationSessionUpdateOpts) {
+    return super._updateWithSubPath<IAccountVerificationSession, IAccountVerificationSessionUpdateOpts>(
+      `/${id}/verification_session/${ver_id}`,
+      opts,
+    );
+  }
+
+  async createSubscription(id: string, data: IAccountSubscriptionCreateOpts) {
+    return super._createWithSubPath<IAccountTransactions, IAccountSubscriptionCreateOpts>(
+      `/${id}/subscriptions`,
+      data
+    )
+  }
+
+  async getLastVerificationStatusField(holder_id: string){
+    return super._getWithParams<IAccountExpanded, { holder_id: string, 'liability.type': string, 'expand[]': string }>(
+      { holder_id, 'liability.type': 'credit_card', 'expand[]': 'latest_verification_session' }
+    )
   }
 }

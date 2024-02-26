@@ -5,11 +5,13 @@ import { IAccount } from '../Account';
 export const ElementTypes = {
   link: 'link',
   auth: 'auth',
+  connect: 'connect',
 };
 
 export type TElementTypes =
   | 'link'
-  | 'auth';
+  | 'auth'
+  | 'connect';
 
 export type TAuthElementAccountFilterTypes =
   | 'auto_loan'
@@ -125,6 +127,15 @@ export type TUserEventType =
   | 'AUTH_FAILURE_OPEN'
   | 'AUTH_FAILURE_CONTINUE';
 
+export const ConnectProducts = {
+  transactions: 'transactions',
+  payoffs: 'payoffs',
+}
+
+export type TConnectProducts = 
+  | 'transactions'
+  | 'payoffs';
+
 export interface ILinkElementCreateOpts {
   mch_id?: string;
   mask?: string;
@@ -148,6 +159,13 @@ export interface IAuthElementEntityOpts {
     phone_verification_timestamp?: string;
   }
 }
+
+export interface IAuthElementConnectOpts {
+  products?: TConnectProducts[];
+  entity?: IAuthElementEntityOpts;
+  accounts?: string[];
+}
+
 export interface IAuthElementCreateOpts {
   account_filters?: IAuthElementAccountFiltersOpts;
   entity?: IAuthElementEntityOpts
@@ -161,6 +179,7 @@ export interface IElementTokenCreateOpts {
   team_icon?: string | null;
   link?: ILinkElementCreateOpts;
   auth?: IAuthElementCreateOpts;
+  connect?: IAuthElementConnectOpts;
 }
 
 export interface IElement {
