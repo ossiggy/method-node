@@ -160,15 +160,15 @@ export interface IAuthElementEntityOpts {
   }
 }
 
+export interface IAuthElementCreateOpts {
+  account_filters?: IAuthElementAccountFiltersOpts;
+  entity?: IAuthElementEntityOpts
+}
+
 export interface IConnectElementCreateOpts {
   products?: TConnectProducts[];
   entity?: IAuthElementEntityOpts;
   accounts?: string[];
-}
-
-export interface IAuthElementCreateOpts {
-  account_filters?: IAuthElementAccountFiltersOpts;
-  entity?: IAuthElementEntityOpts
 }
 
 export interface IElementTokenCreateOpts {

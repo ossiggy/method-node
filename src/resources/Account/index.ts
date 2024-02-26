@@ -328,6 +328,15 @@ export const AccountSubscriptionTypes = {
 export type TAccountSubscriptionTypes = 
   | 'transactions';
 
+export const AccountVerificationSessionCheck = {
+  pass: 'pass',
+  fail: 'fail'
+}
+
+export type TAccountVerificationSessionCheck =
+  | 'pass'
+  | 'fail';
+
 export interface TDelinquencyHistoryItem {
   start_date: string;
   end_date: string;
@@ -697,21 +706,19 @@ export interface IAccountVerificationSessionType {
   last4: string | null;
   exp_year: string | null;
   exp_month: string | null;
-  exp_check: 'pass' | 'fail' | null;
+  exp_check: TAccountVerificationSessionCheck | null;
   cvv: string | null;
-  cvv_check: 'pass' | 'fail' | null;
+  cvv_check: TAccountVerificationSessionCheck | null;
   billing_zip_code: string | null;
-  billing_zip_code_check: 'pass' | 'fail' | null;
+  billing_zip_code_check: TAccountVerificationSessionCheck | null;
   number: string | null;
-  charge_check: 'pass' | 'fail' | null;
-  pre_auth_check: 'pass' | 'fail' | null;
+  charge_check: TAccountVerificationSessionCheck | null;
+  pre_auth_check: TAccountVerificationSessionCheck | null;
 }
 
 export interface IAccountVerificationSessionThreeDS extends IAccountVerificationSessionType {}
 
-export interface IAccountVerificationSessionIssuer extends IAccountVerificationSessionType {
-  updater_status: string | null;
-}
+export interface IAccountVerificationSessionIssuer extends IAccountVerificationSessionType {}
 
 export interface IAccountVerificationSession {
   id: string;
