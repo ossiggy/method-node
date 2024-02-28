@@ -49,6 +49,21 @@ export type TEntityStatuses =
   | 'incomplete'
   | 'disabled';
 
+export const CorporationCreateOptsTypes = {
+  c_corporation: 'c_corporation',
+  s_corporation: 's_corporation',
+  llc: 'llc',
+  partnership: 'partnership',
+  sole_proprietorship: 'sole_proprietorship',
+}
+
+export type TCorporationCreateOptsTypes = 
+  | 'c_corporation'
+  | 's_corporation'
+  | 'llc'
+  | 'partnership'
+  | 'sole_proprietorship';
+
 export const EntityIndividualPhoneVerificationTypes = {
   method_sms: 'method_sms',
   method_verified: 'method_verified',
@@ -94,6 +109,73 @@ export const CreditScoresModel = {
 export type TCreditScoresModel =
   | 'vantage_4'
   | 'vantage_3';
+
+export const EntityIdentityVerfication = {
+  identity_method_kba: 'identity_method_kba',
+  identity_byo_kyc: 'identity_byo_kyc',
+}
+
+export type TEntityIdentityVerfication = 
+  | 'identity_method_kba'
+  | 'identity_byo_kyc';
+
+export const IdentityVerificationStatuses = {
+  completed: 'completed', 
+  pending: 'pending', 
+  failed: 'failed', 
+  in_progress: 'in_progress',
+}
+
+export type TIdentityVerificationStatuses =
+  | 'completed'
+  | 'pending'
+  | 'failed'
+  | 'in_progress';
+
+export const EntityPhoneVerification = {
+  phone_method_sms: 'phone_method_sms',
+  phone_method_sna: 'phone_method_sna',
+  phone_byo_sms: 'phone_byo_sms',
+}
+
+export type TEntityPhoneVerification = 
+  | 'phone_method_sms'
+  | 'phone_method_sna'
+  | 'phone_byo_sms';
+
+export const EntityVerificationStatuses = {
+  match_pending: 'match_pending', 
+  verification_pending: 'verification_pending', 
+  verification_in_progress: 'verification_in_progress', 
+  verified: 'verified', 
+  verification_failed: 'verification_failed',
+}
+
+export type TEntityVerificationStatuses = 
+  | 'match_pending'
+  | 'verification_pending'
+  | 'verification_in_progress'
+  | 'verified'
+  | 'verification_failed';
+
+export const EntitySuggestedMatchFields = {
+  first_name: 'first_name', 
+  last_name: 'last_name', 
+  phone: 'phone', 
+  dob: 'dob', 
+  address: 'address', 
+  ssn_4: 'ssn_4', 
+  ssn: 'ssn',
+}
+
+export type TEntitySuggestedMatchFields =
+  | 'first_name'
+  | 'last_name'
+  | 'phone'
+  | 'dob'
+  | 'address'
+  | 'ssn_4'
+  | 'ssn';
 
 export interface IEntityIndividual {
   first_name: string | null;
@@ -144,6 +226,7 @@ export interface IEntity {
   corporation: IEntityCorporation | null;
   receive_only: IEntityReceiveOnly | null;
   capabilities: TEntityCapabilities[];
+  verification: IEntityVerification | null;
   available_capabilities: TEntityCapabilities[];
   pending_capabilities: TEntityCapabilities[];
   address: IEntityAddress;
@@ -166,12 +249,7 @@ export interface IIndividualCreateOpts extends IEntityCreateOpts {
 }
 
 export interface ICorporationCreateOpts extends IEntityCreateOpts {
-  type:
-  | 'c_corporation'
-  | 's_corporation'
-  | 'llc'
-  | 'partnership'
-  | 'sole_proprietorship';
+  type: TCorporationCreateOptsTypes;
   corporation: Partial<IEntityCorporation>;
 }
 
@@ -303,6 +381,28 @@ export interface IEntitySensitiveResponse {
 export interface IEntityWithdrawConsentOpts {
   type: 'withdraw',
   reason: 'entity_withdrew_consent' | null,
+}
+
+export interface IEntityIdentityVerification {
+  verified: boolean;
+  available_types: TEntityIdentityVerfication[];
+  session: string;
+  status: TIdentityVerificationStatuses
+}
+
+export interface IEntityPhoneVerification {
+  verified: boolean;
+  available_types: TEntityPhoneVerification[];
+  session: string;
+  status: TIdentityVerificationStatuses
+}
+
+export interface IEntityVerification {
+  identity?: IEntityIdentityVerification | null;
+  phone?: IEntityPhoneVerification | null;
+  status: TEntityVerificationStatuses | null;
+  status_error: IResourceError | null;
+  suggested_match_fields: TEntitySuggestedMatchFields[];
 }
 
 export class EntitySubResources {
